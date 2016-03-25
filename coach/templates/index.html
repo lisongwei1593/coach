@@ -15,6 +15,44 @@ table td{border:1px solid black}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script>
+function Reverse(coach_id,time){
+    $.ajax({
+        type : "POST",
+        url : "{% url 'reserve:reserve'%}",
+        data : {
+            "csrfmiddlewaretoken": '{{ csrf_token }}',
+            "coach_id" : coach_id,
+            "time":time,
+        },
+        success : function(result) {//返回数据根据结果进行相应的处理
+            if (result=="ok") {
+                location.reload();
+            } else {
+                alert(result)
+            }
+        }
+    });
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+</script>
 </head>
 <body style="text-align: center;">
 <div id="home">
@@ -26,19 +64,13 @@ table td{border:1px solid black}
 {% for coach in all_coach %}
 	{{coach.name}}
 	<div class="btn-group" data-toggle="buttons">
-	<form action="{% url 'reserve:reserve' %}" method="post">
 		{% for one_time in all_time %}
-		<label class="btn btn-success {% if one_time in coach.reserve_time_list %}{% else %}disabled{% endif %}">
+		<label onclick="Reverse({{coach.id}},'{{one_time}}');" class="btn btn-success {% if one_time in coach.reserve_time_list %}{% else %}disabled{% endif %}">
 		  <input type="radio" name="options" id="option1" autocomplete="off" > {{one_time}}
 		</label>
 		{% endfor %}
-		{% for student in all_student %}
-        <label class="btn btn-success {% if one_time in coach.reserve_time_list %}{% else %}disabled{% endif %}">
-          <input type="radio" name="options" id="option1" autocomplete="off" > {{student}}
-        </label>
-        {% endfor %}
-	</form>
 	</div>
+	<br/>
 {% endfor %}
 </div>
 </body>
