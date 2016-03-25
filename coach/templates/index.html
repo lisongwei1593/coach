@@ -1,0 +1,45 @@
+{% load staticfiles %}
+{% load i18n %}
+<!DOCTYPE HTML>
+<html>
+<head>
+{% block title %}
+<title>Home</title>
+{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+table td{border:1px solid black}
+.fixed-table-loading{display:none}
+</style>
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body style="text-align: center;">
+<div id="home">
+<div>
+<a type="button" class="btn btn-primary" href="{% url 'reserve:set_interval' minutes=15 %}">15分钟</a>
+<a type="button" class="btn btn-primary" href="{% url 'reserve:set_interval' minutes=30 %}">30分钟</a>
+<a type="button" class="btn btn-primary" href="{% url 'reserve:set_interval' minutes=60 %}">1小时</a>
+</div>
+{% for coach in all_coach %}
+	{{coach.name}}
+	<div class="btn-group" data-toggle="buttons">
+	<form action="{% url 'reserve:reserve' %}" method="post">
+		{% for one_time in all_time %}
+		<label class="btn btn-success {% if one_time in coach.reserve_time_list %}{% else %}disabled{% endif %}">
+		  <input type="radio" name="options" id="option1" autocomplete="off" > {{one_time}}
+		</label>
+		{% endfor %}
+		{% for student in all_student %}
+        <label class="btn btn-success {% if one_time in coach.reserve_time_list %}{% else %}disabled{% endif %}">
+          <input type="radio" name="options" id="option1" autocomplete="off" > {{student}}
+        </label>
+        {% endfor %}
+	</form>
+	</div>
+{% endfor %}
+</div>
+</body>
+</html>
